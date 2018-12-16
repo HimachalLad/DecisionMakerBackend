@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.projectDM.entity.Login;
@@ -15,6 +16,9 @@ import com.example.projectDM.service.LoginService;
 public class LoginServiceImpl implements LoginService{
 	@Autowired
 	private LoginRepository loginRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	private String hashPassword(String actualPassword) {
 		return BCrypt.hashpw(actualPassword, BCrypt.gensalt());
@@ -49,7 +53,7 @@ public class LoginServiceImpl implements LoginService{
 
 	@Override
 	public void saveUser(Login login) {
-		login.setPassword(hashPassword(login.getReceivedPassword()));
+		login.setPassword(bCryptPasswordEncoder.encode(login.getReceivedPassword()));
 		loginRepository.save(login);
 	}
 
